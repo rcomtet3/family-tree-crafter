@@ -1,56 +1,48 @@
 # Family Tree Crafter
 
-Application web d'arbre généalogique basée sur une architecture microservices.
+Application web d'arbre généalogique basée sur une architecture microservices avec Docker et Kubernetes.
 
 ## Architecture
 
 ```
 family-tree-crafter/
-├── frontend/              # Applications frontend
-├── infrastructure/        # Composants d'infrastructure (Spring Cloud)
-├── services/              # Microservices métier
+├── frontend/              # Application React
+├── services/              # Microservices
+│   └── person-service/
+├── k8s/                   # Manifests Kubernetes
 └── docker/                # Configurations Docker
 ```
 
-### Infrastructure
+## Services
 
-| Service | Rôle |
-|---------|------|
-| **discovery-server** | Service de découverte (Netflix Eureka) - enregistre etlocalise les microservices |
-| **config-server** | Configuration centralisée (Spring Cloud Config) - gestioncentralisée des propriétés |
-| **api-gateway** | Point d'entrée unique (Spring Cloud Gateway) - routage, authentification, rate limiting |
-
-### Services Métier
-
-| Service | Rôle |
-|---------|------|
-| **auth-service** | Authentification et gestion des utilisateurs (intégration Keycloak) |
-| **person-service** | Gestion des personnes (CRUD, coordonnées, informations personnelles) |
-| **family-service** | Gestion des familles et des relations |
-| **tree-service** | Construction et visualisation de l'arbre généalogique |
-
-### Frontend
-
-| Application | Description |
-|-------------|-------------|
-| **family-tree-crafter-frontend** | Application React + Vite + TypeScript |
+| Service | Port | Description |
+|---------|------|-------------|
+| **person-service** | 8082 | Gestion des personnes |
 
 ## Technologies
 
-- **Backend**: Java 21, Spring Boot 3.x, Spring Cloud
-- **Frontend**: React 18, Vite, TypeScript
-- **Conteneurisation**: Docker, Docker Compose
+- **Backend**: Java 17, Spring Boot 3.x
+- **Frontend**: React + Vite + TypeScript
+- **Conteneurisation**: Docker
+- **Orchestration**: Kubernetes
 
-## Démarrage
+## Configuration Kubernetes
 
-Voir le fichier `docker/docker-compose.yml` pour lancer l'infrastructure complète.
+Les services utilisent des ConfigMaps pour la configuration :
 
-## Structure des commits recommandé
-
+```bash
+kubectl apply -f k8s/person-configmap.yaml
+kubectl apply -f k8s/person-deployment.yaml
+kubectl apply -f k8s/person-service.yaml
 ```
-feat:     Nouvelle fonctionnalité
-fix:      Correction de bug
-refactor: Refactorisation
-chore:    Tâche de maintenance
-docs:     Documentation
+
+## Docker
+
+Build et run local :
+
+```bash
+cd services/person-service
+./mvnw clean package -DskipTests
+docker build -t family-tree/person-service:latest -f src/main/docker/Dockerfile .
+docker run -p 8082:8082 family-tree/person-service:latest
 ```
