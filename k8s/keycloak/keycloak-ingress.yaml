@@ -1,16 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: family-tree-ingress
+  name: keycloak-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
 spec:
   ingressClassName: nginx
   rules:
     - http:
         paths:
-          - path: /persons
+          - path: /keycloak
             pathType: Prefix
             backend:
               service:
-                name: person-service
+                name: keycloak
                 port:
-                  number: 80
+                  number: 8080
