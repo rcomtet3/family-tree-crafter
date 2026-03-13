@@ -21,19 +21,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const init = async () => {
       try {
-        const authenticated = await initKeycloak();
-        setIsAuthenticated(authenticated);
+        await initKeycloak();
         
-        if (authenticated) {
+        if (keycloak.authenticated) {
+          setIsAuthenticated(true);
           setToken(keycloak.token || null);
-          const userInfo = await keycloak.loadUserProfile();
-          setUser(userInfo);
           
-          keycloak.onTokenExpired = () => {
-            keycloak.updateToken(30).catch(() => {
-              keycloak.logout();
-            });
-          };
+          try {
+            const userInfo = await keycloak.loadUserProfile();
+            setUser(userInfo);
+          } catch (e) {
+            console.log('Could not load user profile');
+          }
         }
       } catch (error) {
         console.error('Keycloak initialization failed:', error);

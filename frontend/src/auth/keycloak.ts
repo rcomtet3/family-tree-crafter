@@ -8,17 +8,9 @@ export const keycloakConfig = {
 
 export const keycloak = new Keycloak(keycloakConfig);
 
-let initialized = false;
-
 export const initKeycloak = () => {
-  if (!initialized) {
-    initialized = true;
-    return keycloak.init({
-      onLoad: 'check-sso',
-      silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
-      pkceMethod: 'S256',
-      redirectUri: window.location.origin,
-    });
-  }
-  return Promise.resolve(keycloak.authenticated);
+  return keycloak.init({
+    onLoad: 'login-required',
+    redirectUri: window.location.origin,
+  });
 };

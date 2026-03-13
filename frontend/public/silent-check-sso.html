@@ -1,8 +1,15 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>Silent SSO Check</title>
+</head>
 <body>
   <script>
-    parent.postMessage(document.location.hash, document.origin);
+    // Wait for the page to fully load
+    parent.postMessage(window.location.href, '*');
   </script>
+  <noscript>
+    <p>JavaScript is required for silent SSO check.</p>
+  </noscript>
 </body>
 </html>
